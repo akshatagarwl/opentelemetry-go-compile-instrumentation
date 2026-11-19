@@ -4,6 +4,7 @@
 package instrument
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -34,6 +35,26 @@ func (ip *instrumentPhase) load() ([]*rule.InstRuleSet, error) {
 
 	ip.Debug("Load matched rule sets", "path", f)
 	return rset, nil
+}
+
+// cannotMatch reports whether no rule set in matched.json can be for the
+// package importPath, without decoding the file: a match needs a set whose
+// module_path equals importPath, and json.Marshal writes that field in the
+// same encoding used here. Any read problem returns false so load reports it.
+func cannotMatch(importPath string) (bool, error) {
+	if importPath == "" {
+		return false, nil
+	}
+	content, err := os.ReadFile(util.GetMatchedRuleFile())
+	if err != nil {
+		return false, nil //nolint:nilerr // load reports the error
+	}
+	encoded, err := json.Marshal(importPath)
+	if err != nil {
+		return false, ex.Wrapf(err, "encoding import path %q", importPath)
+	}
+	needle := append([]byte(`"module_path":`), encoded...)
+	return !bytes.Contains(content, needle), nil
 }
 
 // anyRuleSetHasIgnoredCallFiles reports whether any package in this build has

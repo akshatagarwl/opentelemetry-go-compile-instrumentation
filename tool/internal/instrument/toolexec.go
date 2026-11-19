@@ -255,6 +255,15 @@ func interceptCompile(ctx context.Context, args []string) ([]string, error) {
 		importConfigPath: importCfgPath,
 	}
 
+	// Fast path: almost every compile in a build matches no rule set. Skip
+	// decoding matched.json (and everything below) when this package's import
+	// path does not even appear in it.
+	if skip, err := cannotMatch(util.FindFlagValue(args, "-p")); err != nil {
+		return nil, err
+	} else if skip {
+		return args, nil
+	}
+
 	// Parse existing importcfg if present
 	if importCfgPath != "" {
 		imports, err := imports.ParseImportCfg(importCfgPath)
@@ -271,16 +280,16 @@ func interceptCompile(ctx context.Context, args []string) ([]string, error) {
 	}
 	ip.buildUsesIgnoreDirective = anyRuleSetHasIgnoredCallFiles(allSet)
 
-	// Load the import name table, if one exists. A missing table is
-	// not fatal.
-	ip.importNames, err = loadImportNames()
-	if err != nil {
-		return nil, err
-	}
-
 	// Check if the current compile command matches the rules.
 	matched := ip.match(allSet, args)
 	if !matched.IsEmpty() {
+		// Load the import name table, if one exists. A missing table is
+		// not fatal. Only instrumented packages need it.
+		ip.importNames, err = loadImportNames()
+		if err != nil {
+			return nil, err
+		}
+
 		if err = ip.ensurePackageName(matched); err != nil {
 			return nil, err
 		}

@@ -787,9 +787,42 @@ func TestInterceptCompileImportNamesLoadError(t *testing.T) {
 		"-o", filepath.Join(t.TempDir(), "out.a"),
 		"-p", "main",
 	}
-	_, err := interceptCompile(ctx, args)
+	// No rule set can match main, so the compile passes through unchanged and
+	// the (corrupt) import name table, used only to instrument, is not read.
+	got, err := interceptCompile(ctx, args)
+	require.NoError(t, err)
+	assert.Equal(t, args, got)
+
+	_, err = loadImportNames()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "unmarshal")
+}
+
+func TestCannotMatch(t *testing.T) {
+	t.Setenv(util.EnvOtelcWorkDir, t.TempDir())
+	require.NoError(t, os.MkdirAll(util.GetBuildTempDir(), 0o755))
+
+	// A missing matched.json is left for load to report.
+	skip, err := cannotMatch("net/http")
+	require.NoError(t, err)
+	assert.False(t, skip)
+
+	sets := []*rule.InstRuleSet{rule.NewInstRuleSet("net/http"), rule.NewInstRuleSet("example.com/a<b>")}
+	content, err := json.Marshal(sets)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(util.GetMatchedRuleFile(), content, 0o644))
+
+	for path, want := range map[string]bool{
+		"net/http":         false,
+		"example.com/a<b>": false, // HTML-escaped in the file, matched in the same encoding
+		"net":              true,
+		"net/http/pprof":   true,
+		"":                 false,
+	} {
+		skip, err = cannotMatch(path)
+		require.NoError(t, err)
+		assert.Equal(t, want, skip, path)
+	}
 }
 
 func TestUpdateImportConfigAddsResolvedImport(t *testing.T) {
