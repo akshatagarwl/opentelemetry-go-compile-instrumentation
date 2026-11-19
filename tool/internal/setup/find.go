@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"golang.org/x/mod/module"
+	"golang.org/x/tools/go/packages"
 
 	"go.opentelemetry.io/otelc/tool/ex"
 	"go.opentelemetry.io/otelc/tool/internal/session"
@@ -297,4 +298,20 @@ func findDeps(ctx context.Context, subcommand string, cmdArgs []string) ([]*Depe
 		}
 	}
 	return deps, nil
+}
+
+// knownDeps flattens an already-loaded package graph into dependencies
+// carrying only an import path and version (derived the same way findDeps
+// derives it from a build plan). Sources are left empty: the result is for
+// deciding which instrumentation modules apply, not for matching rules.
+func knownDeps(roots []*packages.Package) []*Dependency {
+	var deps []*Dependency
+	packages.Visit(roots, nil, func(p *packages.Package) {
+		dep := &Dependency{ImportPath: p.PkgPath}
+		if len(p.GoFiles) > 0 {
+			dep.Version = findModVersion(p.GoFiles[0])
+		}
+		deps = append(deps, dep)
+	})
+	return deps
 }

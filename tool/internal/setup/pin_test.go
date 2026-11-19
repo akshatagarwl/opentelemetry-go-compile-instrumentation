@@ -1710,7 +1710,7 @@ func TestPin_UpdatesExistingToolFile(t *testing.T) {
 
 func TestAutoPin_NoStateManager(t *testing.T) {
 	// autoPin cannot track files to restore without a stateManager in context.
-	_, err := autoPin(t.Context(), []string{t.TempDir()}, subcmdBuild, nil)
+	_, err := autoPin(t.Context(), []string{t.TempDir()}, subcmdBuild, nil, nil)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "state manager not found")
 }
@@ -1736,7 +1736,7 @@ func TestAutoPin_TracksAndPins(t *testing.T) {
 	sm := newStateManager()
 	ctx := contextWithStateManager(t.Context(), sm)
 
-	_, err := autoPin(ctx, []string{tmp}, subcmdBuild, nil)
+	_, err := autoPin(ctx, []string{tmp}, subcmdBuild, nil, nil)
 	require.NoError(t, err)
 
 	// getBackupFiles tracks go.mod, go.sum, and the tool file together for
@@ -1808,7 +1808,7 @@ func TestAutoPin_TrackAllError(t *testing.T) {
 	sm := newStateManager()
 	ctx := contextWithStateManager(t.Context(), sm)
 
-	_, err := autoPin(ctx, []string{modDir}, "build", []string{"."})
+	_, err := autoPin(ctx, []string{modDir}, "build", []string{"."}, nil)
 	require.Error(t, err)
 }
 
@@ -1839,7 +1839,7 @@ func TestAutoPin_GetBackupFilesError(t *testing.T) {
 	sm := newStateManager()
 	ctx = contextWithStateManager(ctx, sm)
 
-	_, err := autoPin(ctx, []string{"/some/dir"}, "build", []string{"."})
+	_, err := autoPin(ctx, []string{"/some/dir"}, "build", []string{"."}, nil)
 	require.Error(t, err)
 }
 

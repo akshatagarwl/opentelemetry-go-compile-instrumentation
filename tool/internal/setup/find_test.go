@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otelc/tool/util"
+	"golang.org/x/tools/go/packages"
 )
 
 func TestHelperProcess(t *testing.T) {
@@ -1124,4 +1125,28 @@ func captureOutput(t *testing.T, out **os.File) func() string {
 		require.NoError(t, readErr)
 		return string(data)
 	}
+}
+
+func TestKnownDeps(t *testing.T) {
+	std := &packages.Package{PkgPath: "net/http", GoFiles: []string{"/goroot/src/net/http/server.go"}}
+	dep := &packages.Package{
+		PkgPath: "github.com/Foo/bar",
+		GoFiles: []string{"/gopath/pkg/mod/github.com/!foo/bar@v1.2.3/bar.go"},
+		Imports: map[string]*packages.Package{"net/http": std},
+	}
+	root := &packages.Package{
+		PkgPath: "example.com/app",
+		GoFiles: []string{"/src/app/main.go"},
+		Imports: map[string]*packages.Package{"github.com/Foo/bar": dep, "net/http": std},
+	}
+	got := map[string]string{}
+	for _, d := range knownDeps([]*packages.Package{root}) {
+		got[d.ImportPath] = d.Version
+		assert.Empty(t, d.Sources)
+	}
+	assert.Equal(t, map[string]string{
+		"example.com/app":    "",
+		"github.com/Foo/bar": "v1.2.3",
+		"net/http":           "",
+	}, got)
 }

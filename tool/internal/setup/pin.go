@@ -579,10 +579,16 @@ func generatePinnedProjects(ctx context.Context, moduleDirs []string, opts PinOp
 		subcommand = subcmdBuild
 	}
 
-	// No tool file found? Try generating one.
-	deps, findDepsErr := findDeps(ctx, subcommand, opts.Args)
-	if findDepsErr != nil {
-		return nil, findDepsErr
+	// No tool file found? Try generating one. Matching instrumentation
+	// modules needs only import paths and versions; when the caller already
+	// loaded the package graph, use it instead of a full build-plan dry run.
+	deps := opts.KnownDeps
+	if deps == nil {
+		var findDepsErr error
+		deps, findDepsErr = findDeps(ctx, subcommand, opts.Args)
+		if findDepsErr != nil {
+			return nil, findDepsErr
+		}
 	}
 
 	extractErr := extractOtelcBundle()
@@ -615,6 +621,10 @@ func generatePinnedProjects(ctx context.Context, moduleDirs []string, opts PinOp
 		logger.WarnContext(ctx, "no instrumentations matched, skipping generating tool file")
 
 		// Ok to re-use deps here, because we do not run "go mod tidy".
+		// KnownDeps carry no sources, so setup must still list the plan.
+		if opts.KnownDeps != nil {
+			return &PinResult{}, nil
+		}
 		return &PinResult{AllDeps: deps}, nil
 	}
 
@@ -677,6 +687,10 @@ type PinOptions struct {
 	// The list may hold duplicates and entries in any order; Pin normalizes it.
 	// If the list is empty, Pin finds the module directories with opts.Args.
 	ModuleDirs []string
+	// KnownDeps, when non-nil, are the build's packages (import path and
+	// version only) and replace the build-plan dry run used to decide which
+	// instrumentation modules to pin.
+	KnownDeps []*Dependency
 }
 
 type PinResult struct {
@@ -743,7 +757,9 @@ func pinLocked(ctx context.Context, opts PinOptions) (*PinResult, error) {
 
 // autoPin is a convenience function that automatically tracks generated/modified files before calling Pin
 // in order to restore them after the build completes.
-func autoPin(ctx context.Context, moduleDirs []string, subcommand string, args []string) (*PinResult, error) {
+func autoPin(
+	ctx context.Context, moduleDirs []string, subcommand string, args []string, knownDeps []*Dependency,
+) (*PinResult, error) {
 	stateManager, found := stateManagerFromContext(ctx)
 	if !found {
 		return nil, ex.New("state manager not found in context")
@@ -762,6 +778,7 @@ func autoPin(ctx context.Context, moduleDirs []string, subcommand string, args [
 		Args:       args,
 		Subcommand: subcommand,
 		ModuleDirs: moduleDirs,
+		KnownDeps:  knownDeps,
 	})
 
 	return pinResult, pinErr
