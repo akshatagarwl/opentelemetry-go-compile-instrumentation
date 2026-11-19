@@ -1,0 +1,182 @@
+{
+  "duration_unit": "microseconds",
+  "fixture": "PostgreSQL 17, lib/pq v1.10.9, 300000 generated synthetic rows",
+  "before": [
+    {
+      "duration": 228238,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "17ba75ee6f41a1e7",
+      "span_name": "consume-orders",
+      "start_us": 1795040599025128,
+      "status_code": 0,
+      "trace_id": "1211adf78060ceecc1dffb21c11ca39b"
+    },
+    {
+      "duration": 28112,
+      "parent_span_id": "17ba75ee6f41a1e7",
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "8d57163c324cefd7",
+      "span_name": "SELECT",
+      "start_us": 1795040599025149,
+      "status_code": 0,
+      "trace_id": "1211adf78060ceecc1dffb21c11ca39b"
+    },
+    {
+      "duration": 260508,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "e7ba30446a93388e",
+      "span_name": "consume-orders",
+      "start_us": 1795040599524777,
+      "status_code": 0,
+      "trace_id": "73be9d04f6251bc2d808dfc73f7805b8"
+    },
+    {
+      "duration": 30405,
+      "parent_span_id": "e7ba30446a93388e",
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "3439345fa2f155b4",
+      "span_name": "SELECT",
+      "start_us": 1795040599524789,
+      "status_code": 0,
+      "trace_id": "73be9d04f6251bc2d808dfc73f7805b8"
+    },
+    {
+      "duration": 271217,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "64ea413921fdd303",
+      "span_name": "consume-orders",
+      "start_us": 1795040599253498,
+      "status_code": 0,
+      "trace_id": "82dd2b428569d88d233c1741796a4806"
+    },
+    {
+      "duration": 32223,
+      "parent_span_id": "64ea413921fdd303",
+      "service_name": "otelc-1709-baseline",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "b2874ffb4929ba25",
+      "span_name": "SELECT",
+      "start_us": 1795040599253512,
+      "status_code": 0,
+      "trace_id": "82dd2b428569d88d233c1741796a4806"
+    }
+  ],
+  "after": [
+    {
+      "duration": 226838,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "117a32f4180b9ac8",
+      "span_kind": 1,
+      "span_name": "consume-orders",
+      "start_us": 1795045800724289,
+      "status_code": 0,
+      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+    },
+    {
+      "duration": 25794,
+      "parent_span_id": "117a32f4180b9ac8",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "1eb7c47f44fd53b5",
+      "span_kind": 3,
+      "span_name": "SELECT",
+      "start_us": 1795045800724301,
+      "status_code": 0,
+      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+    },
+    {
+      "duration": 200977,
+      "parent_span_id": "1eb7c47f44fd53b5",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "05272873be66318f",
+      "span_kind": 1,
+      "span_name": "sql.rows",
+      "start_us": 1795045800750103,
+      "status_code": 0,
+      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+    },
+    {
+      "duration": 285209,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "7c021725aef38a0b",
+      "span_kind": 1,
+      "span_name": "consume-orders",
+      "start_us": 1795045800951234,
+      "status_code": 0,
+      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+    },
+    {
+      "duration": 26427,
+      "parent_span_id": "7c021725aef38a0b",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "3a3f75005bc3d79e",
+      "span_kind": 3,
+      "span_name": "SELECT",
+      "start_us": 1795045800951279,
+      "status_code": 0,
+      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+    },
+    {
+      "duration": 258679,
+      "parent_span_id": "3a3f75005bc3d79e",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "749679d69fed73fa",
+      "span_kind": 1,
+      "span_name": "sql.rows",
+      "start_us": 1795045800977732,
+      "status_code": 0,
+      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+    },
+    {
+      "duration": 302860,
+      "parent_span_id": null,
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"repro.rows\":300000}",
+      "span_id": "3ff05d3bde4b0b48",
+      "span_kind": 1,
+      "span_name": "consume-orders",
+      "start_us": 1795045800421314,
+      "status_code": 0,
+      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+    },
+    {
+      "duration": 37256,
+      "parent_span_id": "3ff05d3bde4b0b48",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "88856ec2680c7d54",
+      "span_kind": 3,
+      "span_name": "SELECT",
+      "start_us": 1795045800421331,
+      "status_code": 0,
+      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+    },
+    {
+      "duration": 265539,
+      "parent_span_id": "88856ec2680c7d54",
+      "service_name": "otelc-1709-after",
+      "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
+      "span_id": "d76753d448459561",
+      "span_kind": 1,
+      "span_name": "sql.rows",
+      "start_us": 1795045800458601,
+      "status_code": 0,
+      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+    }
+  ]
+}
