@@ -2705,7 +2705,7 @@ func TestMatchDeps_RunMatchError(t *testing.T) {
 `), 0o644)
 	require.NoError(t, err)
 
-	badSrc := writeGoSource(t, "bad.go", "not valid go {{{")
+	badSrc := writeGoSource(t, "bad.go", "not valid go Handler {{{")
 	sp := newTestSetupPhase()
 	sp.ruleConfig = ruleFile
 
@@ -3043,4 +3043,39 @@ func TestLoadRules_LogsSource(t *testing.T) {
 			assert.NotContains(t, logs.String(), "!BADKEY")
 		})
 	}
+}
+
+func TestRuleNeedles(t *testing.T) {
+	needles := ruleNeedles([]rule.InstRule{
+		&rule.InstFuncRule{Func: "ServeHTTP"},
+		&rule.InstStructRule{Struct: "Server"},
+	})
+	assert.Equal(t, [][]byte{[]byte("ServeHTTP"), []byte("Server"), []byte("otelc:")}, needles)
+
+	// A call rule can match any file, so no file may be skipped.
+	assert.Nil(t, ruleNeedles([]rule.InstRule{
+		&rule.InstFuncRule{Func: "ServeHTTP"},
+		&rule.InstCallRule{},
+	}))
+}
+
+func TestFileMayMatch(t *testing.T) {
+	dir := t.TempDir()
+	write := func(name, src string) string {
+		p := filepath.Join(dir, name)
+		require.NoError(t, os.WriteFile(p, []byte(src), 0o644))
+		return p
+	}
+	needles := ruleNeedles([]rule.InstRule{&rule.InstFuncRule{Func: "ServeHTTP"}})
+	for path, want := range map[string]bool{
+		write("hit.go", "package p\nfunc (s *S) ServeHTTP() {}\n"):      true,
+		write("miss.go", "package p\nfunc Other() {}\n"):                false,
+		write("directive.go", "package p\n//otelc:span\nfunc F() {}\n"): true,
+	} {
+		got, err := fileMayMatch(path, needles)
+		require.NoError(t, err)
+		assert.Equal(t, want, got, path)
+	}
+	_, err := fileMayMatch(filepath.Join(dir, "missing.go"), needles)
+	require.Error(t, err)
 }

@@ -267,9 +267,29 @@ func (sp *setupPhase) preciseMatching(
 
 	known := knownDirectiveNames(rules)
 
+	// Parsing is the expensive part of setup, and most files of a package
+	// cannot match any rule: a func rule needs the function's name in the
+	// file, a struct rule the type's name, and so on. Skip parsing a file
+	// that contains none of those names (nor any otelc: directive, which
+	// warnUnknownDirectives would report). Diagnostics need a decision per
+	// file, so they keep the full path.
+	var needles [][]byte
+	if sp.decision == nil {
+		needles = ruleNeedles(rules)
+	}
+
 	for _, source := range dep.Sources {
 		if err := ctx.Err(); err != nil {
 			return nil, err
+		}
+		if needles != nil {
+			maybe, err := fileMayMatch(source, needles)
+			if err != nil {
+				return nil, err
+			}
+			if !maybe {
+				continue
+			}
 		}
 		// Parse the source code. Since the only purpose here is to match,
 		// no node updates, we can use the fast variant.
@@ -311,6 +331,48 @@ func (sp *setupPhase) preciseMatching(
 		}
 	}
 	return set, nil
+}
+
+// ruleNeedles returns, for rules that can only match a file naming a given
+// identifier, those identifiers. It returns nil when any rule may match a
+// file regardless of its text (call and literal rules apply to every file).
+func ruleNeedles(rules []rule.InstRule) [][]byte {
+	needles := make([][]byte, 0, len(rules)+1)
+	for _, r := range rules {
+		var name string
+		switch rt := r.(type) {
+		case *rule.InstFuncRule:
+			name = rt.Func
+		case *rule.InstRawRule:
+			name = rt.Func
+		case *rule.InstStructRule:
+			name = rt.Struct
+		case *rule.InstDeclRule:
+			name = rt.Identifier
+		case *rule.InstDirectiveRule:
+			name = rt.Directive
+		}
+		if name == "" {
+			return nil
+		}
+		needles = append(needles, []byte(name))
+	}
+	// Any otelc: directive comment, for warnUnknownDirectives.
+	return append(needles, []byte("otelc:"))
+}
+
+// fileMayMatch reports whether the file at path contains any of needles.
+func fileMayMatch(path string, needles [][]byte) (bool, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return false, ex.Wrapf(err, "reading %s", path)
+	}
+	for _, n := range needles {
+		if bytes.Contains(content, n) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func knownDirectiveNames(rules []rule.InstRule) map[string]bool {
