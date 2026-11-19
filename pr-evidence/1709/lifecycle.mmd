@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant App as Application
+    participant SQL as database/sql
+    participant Export as Exporter
+    App->>SQL: QueryContext
+    SQL->>Export: End existing query span
+    SQL->>SQL: Register callbacks under closemu
+    SQL-->>App: Return Rows
+    Note over App,SQL: No live rows span<br/>between reads
+    loop Successful Next calls
+        App->>SQL: Next
+        SQL->>SQL: Count observed row
+        SQL-->>App: Row available
+        Note over App: Scan and caller work
+    end
+    App->>SQL: Final EOF or Close
+    Note over SQL: Cancellation also<br/>uses private close
+    SQL->>SQL: Clear callbacks once, release lock
+    SQL->>Export: Emit sql.rows
+    Note over SQL,Export: Child of query<br/>observed timestamps and row count

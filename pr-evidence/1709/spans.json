@@ -71,112 +71,112 @@
   ],
   "after": [
     {
-      "duration": 226838,
+      "duration": 663151,
       "parent_span_id": null,
-      "service_name": "otelc-1709-after",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"repro.rows\":300000}",
-      "span_id": "117a32f4180b9ac8",
+      "span_id": "17e264575eca6466",
       "span_kind": 1,
       "span_name": "consume-orders",
-      "start_us": 1795045800724289,
+      "start_us": 1795060935557803,
       "status_code": 0,
-      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+      "trace_id": "18fa4857c4987132ec914305a6ae4e1a"
     },
     {
-      "duration": 25794,
-      "parent_span_id": "117a32f4180b9ac8",
-      "service_name": "otelc-1709-after",
+      "duration": 84308,
+      "parent_span_id": "17e264575eca6466",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "1eb7c47f44fd53b5",
+      "span_id": "7b0992e381094927",
       "span_kind": 3,
       "span_name": "SELECT",
-      "start_us": 1795045800724301,
+      "start_us": 1795060935557819,
       "status_code": 0,
-      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+      "trace_id": "18fa4857c4987132ec914305a6ae4e1a"
     },
     {
-      "duration": 200977,
-      "parent_span_id": "1eb7c47f44fd53b5",
-      "service_name": "otelc-1709-after",
+      "duration": 578740,
+      "parent_span_id": "7b0992e381094927",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "05272873be66318f",
+      "span_id": "420fe80df8db70bc",
       "span_kind": 1,
       "span_name": "sql.rows",
-      "start_us": 1795045800750103,
+      "start_us": 1795060935642160,
       "status_code": 0,
-      "trace_id": "07c06f18f1c56dec5d28fcfb41b233cd"
+      "trace_id": "18fa4857c4987132ec914305a6ae4e1a"
     },
     {
-      "duration": 285209,
+      "duration": 503769,
       "parent_span_id": null,
-      "service_name": "otelc-1709-after",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"repro.rows\":300000}",
-      "span_id": "7c021725aef38a0b",
+      "span_id": "6215c97cc91e3d58",
       "span_kind": 1,
       "span_name": "consume-orders",
-      "start_us": 1795045800951234,
+      "start_us": 1795060936221252,
       "status_code": 0,
-      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+      "trace_id": "a885b6840f2d7cc011cfb64771c631a6"
     },
     {
-      "duration": 26427,
-      "parent_span_id": "7c021725aef38a0b",
-      "service_name": "otelc-1709-after",
+      "duration": 109404,
+      "parent_span_id": "6215c97cc91e3d58",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "3a3f75005bc3d79e",
+      "span_id": "33664fe33af9de42",
       "span_kind": 3,
       "span_name": "SELECT",
-      "start_us": 1795045800951279,
+      "start_us": 1795060936221278,
       "status_code": 0,
-      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+      "trace_id": "a885b6840f2d7cc011cfb64771c631a6"
     },
     {
-      "duration": 258679,
-      "parent_span_id": "3a3f75005bc3d79e",
-      "service_name": "otelc-1709-after",
+      "duration": 394284,
+      "parent_span_id": "33664fe33af9de42",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "749679d69fed73fa",
+      "span_id": "2cbc357d3c0f8a77",
       "span_kind": 1,
       "span_name": "sql.rows",
-      "start_us": 1795045800977732,
+      "start_us": 1795060936330690,
       "status_code": 0,
-      "trace_id": "65d49979c5367c009fbc0a8408e3e8c0"
+      "trace_id": "a885b6840f2d7cc011cfb64771c631a6"
     },
     {
-      "duration": 302860,
+      "duration": 215398,
       "parent_span_id": null,
-      "service_name": "otelc-1709-after",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"repro.rows\":300000}",
-      "span_id": "3ff05d3bde4b0b48",
+      "span_id": "f29ed6be65aa5aba",
       "span_kind": 1,
       "span_name": "consume-orders",
-      "start_us": 1795045800421314,
+      "start_us": 1795060936725111,
       "status_code": 0,
-      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+      "trace_id": "acf550ebbe89817c73b0fa8b08634688"
     },
     {
-      "duration": 37256,
-      "parent_span_id": "3ff05d3bde4b0b48",
-      "service_name": "otelc-1709-after",
+      "duration": 31645,
+      "parent_span_id": "f29ed6be65aa5aba",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "88856ec2680c7d54",
+      "span_id": "66a1546ef5cfbb27",
       "span_kind": 3,
       "span_name": "SELECT",
-      "start_us": 1795045800421331,
+      "start_us": 1795060936725123,
       "status_code": 0,
-      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+      "trace_id": "acf550ebbe89817c73b0fa8b08634688"
     },
     {
-      "duration": 265539,
-      "parent_span_id": "88856ec2680c7d54",
-      "service_name": "otelc-1709-after",
+      "duration": 183707,
+      "parent_span_id": "66a1546ef5cfbb27",
+      "service_name": "otelc-1709-default",
       "span_attributes": "{\"db.namespace\":\"postgres\",\"db.operation.name\":\"SELECT\",\"db.query.text\":\"SELECT id, 'synthetic-customer', id * 1.25 FROM generate_series(1, 300000) AS id\",\"db.response.returned_rows\":300000,\"db.system.name\":\"postgresql\",\"network.transport\":\"tcp\",\"server.address\":\"127.0.0.1\",\"server.port\":15439}",
-      "span_id": "d76753d448459561",
+      "span_id": "b29461a7d4276332",
       "span_kind": 1,
       "span_name": "sql.rows",
-      "start_us": 1795045800458601,
+      "start_us": 1795060936756777,
       "status_code": 0,
-      "trace_id": "f1b18d2595f967c4512fa3acde4b15fc"
+      "trace_id": "acf550ebbe89817c73b0fa8b08634688"
     }
   ]
 }
