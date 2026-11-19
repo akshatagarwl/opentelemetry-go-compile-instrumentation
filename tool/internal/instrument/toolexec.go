@@ -277,6 +277,7 @@ func interceptCompile(ctx context.Context, args []string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	ctx = imports.WithKnownNames(ctx, ip.importNames)
 
 	// Check if the current compile command matches the rules.
 	matched := ip.match(allSet, args)

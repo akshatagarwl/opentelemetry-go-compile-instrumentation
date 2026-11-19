@@ -17,6 +17,27 @@ import (
 	"go.opentelemetry.io/otelc/tool/internal/pkgload"
 )
 
+type knownNamesKey struct{}
+
+// WithKnownNames returns a context whose package-name lookups consult names
+// (import path -> package name, as recorded by setup) before falling back to
+// go list. Each fallback spawns go processes, so a hit saves ~50-100ms.
+func WithKnownNames(ctx context.Context, names map[string]string) context.Context {
+	if len(names) == 0 {
+		return ctx
+	}
+	return context.WithValue(ctx, knownNamesKey{}, names)
+}
+
+func resolvePackageName(ctx context.Context, importPath string, buildFlags ...string) string {
+	if names, ok := ctx.Value(knownNamesKey{}).(map[string]string); ok {
+		if name := names[importPath]; name != "" {
+			return name
+		}
+	}
+	return pkgload.ResolvePackageName(ctx, importPath, buildFlags...)
+}
+
 // importMapping holds bidirectional import mappings for a file.
 type importMapping struct {
 	AliasToPath   map[string]string   // alias -> import path
@@ -68,7 +89,7 @@ func parseFile(ctx context.Context, root *dst.File, buildFlags ...string) import
 				alias = importSpec.Name.Name
 				maps.ExplicitAlias[importPath] = true
 			} else {
-				alias = pkgload.ResolvePackageName(ctx, importPath, buildFlags...)
+				alias = resolvePackageName(ctx, importPath, buildFlags...)
 			}
 
 			maps.AliasToPath[alias] = importPath
@@ -131,7 +152,7 @@ func createSpec(ctx context.Context, alias, importPath string, buildFlags ...str
 		Path: &dst.BasicLit{Value: strconv.Quote(importPath)},
 	}
 
-	pkgName := pkgload.ResolvePackageName(ctx, importPath, buildFlags...)
+	pkgName := resolvePackageName(ctx, importPath, buildFlags...)
 
 	// Set Name only if:
 	// 1. It's a blank import (alias == "_")

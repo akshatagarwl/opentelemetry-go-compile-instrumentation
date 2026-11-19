@@ -638,3 +638,22 @@ func TestCollectImportPaths(t *testing.T) {
 		})
 	}
 }
+
+// A name from setup's table must be used as is: the import path is not
+// resolvable (and its last element differs from the name), so a fallback to
+// go list would not produce "yaml".
+func TestResolvePackageNameUsesKnownNames(t *testing.T) {
+	ctx := WithKnownNames(t.Context(), map[string]string{"example.invalid/go-yaml/v3": "yaml"})
+	assert.Equal(t, "yaml", resolvePackageName(ctx, "example.invalid/go-yaml/v3"))
+
+	root := &dst.File{Decls: []dst.Decl{&dst.GenDecl{
+		Tok:   token.IMPORT,
+		Specs: []dst.Spec{&dst.ImportSpec{Path: &dst.BasicLit{Value: `"example.invalid/go-yaml/v3"`}}},
+	}}}
+	assert.Equal(t, map[string]string{"yaml": "example.invalid/go-yaml/v3"}, Existing(ctx, root))
+}
+
+func TestWithKnownNamesEmptyKeepsContext(t *testing.T) {
+	ctx := t.Context()
+	assert.Equal(t, ctx, WithKnownNames(ctx, nil))
+}
